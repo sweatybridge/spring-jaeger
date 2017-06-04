@@ -14,8 +14,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [node.hostname == project]
 
   mockdb:
     image: 127.0.0.1:5000/mockdb:jaeger
@@ -26,7 +24,7 @@ services:
         mode: ingress
     environment:
       JAEGER_SERVICE_NAME: mockdb
-      JAEGER_AGENT_HOST: graphic12.doc.ic.ac.uk
+      JAEGER_AGENT_HOST: jaeger
       JAEGER_SAMPLER_TYPE: const
       JAEGER_SAMPLER_PARAM: 1
     deploy:
@@ -43,8 +41,6 @@ services:
         failure_action: continue
         monitor: 60s
         max_failure_ratio: 0.3
-      placement:
-        constraints: [node.hostname == project]
 
   spring:
     image: 127.0.0.1:5000/spring:jaeger
@@ -55,7 +51,7 @@ services:
       - 8080:8080
     environment:
       JAEGER_SERVICE_NAME: spring
-      JAEGER_AGENT_HOST: graphic12.doc.ic.ac.uk
+      JAEGER_AGENT_HOST: jaeger
       JAEGER_SAMPLER_TYPE: const
       JAEGER_SAMPLER_PARAM: 1
     deploy:
@@ -72,5 +68,3 @@ services:
         failure_action: continue
         monitor: 60s
         max_failure_ratio: 0.3
-      placement:
-        constraints: [node.hostname == project]
