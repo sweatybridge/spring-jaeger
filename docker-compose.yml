@@ -1,0 +1,76 @@
+version: "3.2"
+
+services:
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - 5775:5775/udp
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 5778:5778
+      - 16686:16686
+      - 14268:14268
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == project]
+
+  mockdb:
+    image: 127.0.0.1:5000/mockdb:jaeger
+    build: mockdb
+    ports:
+      - target: 8080
+        published: 8081
+        mode: ingress
+    environment:
+      JAEGER_SERVICE_NAME: mockdb
+      JAEGER_AGENT_HOST: graphic12.doc.ic.ac.uk
+      JAEGER_SAMPLER_TYPE: const
+      JAEGER_SAMPLER_PARAM: 1
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      placement:
+        constraints: [node.hostname == project]
+
+  spring:
+    image: 127.0.0.1:5000/spring:jaeger
+    build: app
+    depends_on:
+      - mockdb
+    ports:
+      - 8080:8080
+    environment:
+      JAEGER_SERVICE_NAME: spring
+      JAEGER_AGENT_HOST: graphic12.doc.ic.ac.uk
+      JAEGER_SAMPLER_TYPE: const
+      JAEGER_SAMPLER_PARAM: 1
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      placement:
+        constraints: [node.hostname == project]
