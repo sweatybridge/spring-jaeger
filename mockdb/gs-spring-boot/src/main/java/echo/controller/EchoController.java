@@ -2,6 +2,7 @@ package echo.controller;
 
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import io.opentracing.mock.MockTracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +28,10 @@ public class EchoController {
           noop();
         }
       }
+    }
+    if (tracer instanceof MockTracer) {
+      MockTracer mocked = (MockTracer) tracer;
+      System.out.println("collected spans: " + mocked.finishedSpans().size());
     }
     return name;
   }

@@ -3,6 +3,7 @@ package echo;
 import com.uber.jaeger.Configuration;
 import com.uber.jaeger.context.TracingUtils;
 import io.opentracing.Tracer;
+import io.opentracing.mock.MockTracer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -22,11 +23,11 @@ public class Application extends AsyncConfigurerSupport {
 
   @Override
   public Executor getAsyncExecutor() {
-    return TracingUtils.tracedExecutor(Executors.newFixedThreadPool(2));
+    return Executors.newFixedThreadPool(4);
   }
 
   @Bean
   public Tracer tracer() {
-    return Configuration.fromEnv().getTracer();
+    return new MockTracer();
   }
 }
