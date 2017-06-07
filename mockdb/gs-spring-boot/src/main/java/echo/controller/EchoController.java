@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EchoController {
 
-  private static final int count = 100;
+  private static final int count = Integer.parseInt(System.getProperty("noop.count", "1"));
 
   private final Tracer tracer;
 
