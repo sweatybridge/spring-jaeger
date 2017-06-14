@@ -1,6 +1,6 @@
 package echo.controller;
 
-import io.opentracing.Span;
+import io.opentracing.ActiveSpan;
 import io.opentracing.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +21,10 @@ public class EchoController {
 
   @RequestMapping("/echo")
   public String b(@RequestParam String name) {
-    try (Span parent = tracer.buildSpan("echo").start()) {
+    ActiveSpan remote = tracer.activeSpan();
+    try (ActiveSpan parent = tracer.buildSpan("echo").asChildOf(remote.context()).startActive()) {
       for (int i = 0; i < count; i++) {
-        try (Span child = tracer.buildSpan("noop").asChildOf(parent).start()) {
+        try (ActiveSpan child = tracer.buildSpan("noop").asChildOf(parent.context()).startActive()) {
           noop();
         }
       }
