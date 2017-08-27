@@ -20,7 +20,7 @@ public class EchoController {
   }
 
   @RequestMapping("/echo")
-  public String b(@RequestParam String name) {
+  public String echo(@RequestParam String name) {
     ActiveSpan remote = tracer.activeSpan();
     try (ActiveSpan parent = tracer.buildSpan("echo").asChildOf(remote.context()).startActive()) {
       for (int i = 0; i < count; i++) {

@@ -29,8 +29,8 @@ public class HelloController {
     this.executor = executor;
   }
 
-  @RequestMapping("/a")
-  public String a() throws ExecutionException, InterruptedException {
+  @RequestMapping("/hello")
+  public String hello() throws ExecutionException, InterruptedException {
 
     CompletableFuture<String> r1 = echoService.findUser("Imperial");
     CompletableFuture<String> r2 = echoService.findUser("College");
@@ -42,7 +42,7 @@ public class HelloController {
   }
 
   @RequestMapping("/c")
-  public String t() throws ExecutionException, InterruptedException {
+  public String c() throws ExecutionException, InterruptedException {
     ListenableFuture<ResponseEntity<String>> imperial = asyncRestTemplate.getForEntity("http://mockdb:8080/echo?name=Imperial", String.class);
     ListenableFuture<ResponseEntity<String>> college = asyncRestTemplate.getForEntity("http://mockdb:8080/echo?name=College", String.class);
     ListenableFuture<ResponseEntity<String>> london = asyncRestTemplate.getForEntity("http://mockdb:8080/echo?name=London", String.class);
@@ -50,7 +50,7 @@ public class HelloController {
   }
 
   @RequestMapping("/search")
-  public String abc(@RequestParam Integer echo) throws ExecutionException, InterruptedException {
+  public String search(@RequestParam Integer echo) throws ExecutionException, InterruptedException {
     CompletableFuture<String>[] rs = new CompletableFuture[echo];
     for (int i = 0; i < echo; i++) {
       String url = String.format("http://mockdb:8080/echo?name=%d", i);
