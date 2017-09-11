@@ -39,6 +39,7 @@ dependencies {
     compile "com.uber.jaeger:jaeger-core:0.20.0-SNAPSHOT"
     compile "com.uber.jaeger:jaeger-context:0.20.0-SNAPSHOT"
     compile "io.opentracing.contrib:opentracing-spring-web-autoconfigure:0.0.5"
+    compile "io.opentracing.contrib:opentracing-concurrent:0.0.1"
     testCompile("org.springframework.boot:spring-boot-starter-test")
     // end::tests[]
 }

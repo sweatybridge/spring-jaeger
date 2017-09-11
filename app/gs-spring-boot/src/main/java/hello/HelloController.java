@@ -16,14 +16,15 @@ import java.util.concurrent.Executor;
 @RestController
 public class HelloController {
 
-  private final EchoService echoService;
   private final AsyncRestTemplate asyncRestTemplate;
   private final RestTemplate restTemplate;
   private final Executor executor;
 
   @Autowired
-  public HelloController(EchoService echoService, AsyncRestTemplate asyncRestTemplate, RestTemplate restTemplate, Executor executor) {
-    this.echoService = echoService;
+  public HelloController(
+      AsyncRestTemplate asyncRestTemplate,
+      RestTemplate restTemplate,
+      Executor executor) {
     this.asyncRestTemplate = asyncRestTemplate;
     this.restTemplate = restTemplate;
     this.executor = executor;
@@ -31,22 +32,14 @@ public class HelloController {
 
   @RequestMapping("/hello")
   public String hello() throws ExecutionException, InterruptedException {
-
-    CompletableFuture<String> r1 = echoService.findUser("Imperial");
-    CompletableFuture<String> r2 = echoService.findUser("College");
-    CompletableFuture<String> r3 = echoService.findUser("London");
-
-    CompletableFuture.allOf(r1, r2, r3).join();
-
-    return String.format("My school is %s %s %s.", r1.get(), r2.get(), r3.get());
-  }
-
-  @RequestMapping("/c")
-  public String c() throws ExecutionException, InterruptedException {
-    ListenableFuture<ResponseEntity<String>> imperial = asyncRestTemplate.getForEntity("http://mockdb:8080/echo?name=Imperial", String.class);
-    ListenableFuture<ResponseEntity<String>> college = asyncRestTemplate.getForEntity("http://mockdb:8080/echo?name=College", String.class);
-    ListenableFuture<ResponseEntity<String>> london = asyncRestTemplate.getForEntity("http://mockdb:8080/echo?name=London", String.class);
-    return String.format("My school is %s %s %s.", imperial.get().getBody(), college.get().getBody(), london.get().getBody());
+    ListenableFuture<ResponseEntity<String>> imperial = asyncRestTemplate.getForEntity(
+        "http://mockdb:8080/echo?name=Imperial", String.class);
+    ListenableFuture<ResponseEntity<String>> college = asyncRestTemplate.getForEntity(
+        "http://mockdb:8080/echo?name=College", String.class);
+    ListenableFuture<ResponseEntity<String>> london = asyncRestTemplate.getForEntity(
+        "http://mockdb:8080/echo?name=London", String.class);
+    return String.format("My school is %s %s %s.",
+        imperial.get().getBody(), college.get().getBody(), london.get().getBody());
   }
 
   @RequestMapping("/search")
@@ -54,8 +47,10 @@ public class HelloController {
     CompletableFuture<String>[] rs = new CompletableFuture[echo];
     for (int i = 0; i < echo; i++) {
       String url = String.format("http://mockdb:8080/echo?name=%d", i);
-      rs[i] = CompletableFuture.supplyAsync(() -> restTemplate.getForObject(url, String.class), executor);
+      rs[i] = CompletableFuture.supplyAsync(() -> 
+          restTemplate.getForObject(url, String.class), executor);
     }
+
     CompletableFuture.allOf(rs).join();
     return "done";
   }

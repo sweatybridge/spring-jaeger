@@ -1,4 +1,4 @@
-package echo.controller;
+package echo;
 
 import io.opentracing.ActiveSpan;
 import io.opentracing.Tracer;
@@ -29,6 +29,7 @@ public class EchoController {
         }
       }
     }
+
     return name;
   }
 

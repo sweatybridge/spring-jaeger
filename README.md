@@ -1,6 +1,6 @@
 # spring-jaeger
 
-## Setup Guid
+## Setup Guide
 ```sh
 docker-compose build
 docker-compose push

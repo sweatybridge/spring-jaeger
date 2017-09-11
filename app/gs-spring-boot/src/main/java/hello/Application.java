@@ -1,8 +1,9 @@
 package hello;
 
 import com.uber.jaeger.Configuration;
-import com.uber.jaeger.context.TracingUtils;
 import io.opentracing.Tracer;
+import io.opentracing.contrib.concurrent.TracedExecutorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -20,6 +21,9 @@ import java.util.concurrent.Executors;
 @EnableAsync
 public class Application extends AsyncConfigurerSupport {
 
+  @Autowired
+  private Tracer tracer;
+
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);
   }
@@ -27,7 +31,7 @@ public class Application extends AsyncConfigurerSupport {
   @Bean("executor")
   @Override
   public Executor getAsyncExecutor() {
-    return TracingUtils.tracedExecutor(Executors.newFixedThreadPool(2));
+    return new TracedExecutorService(Executors.newFixedThreadPool(2), tracer);
   }
 
   @Bean

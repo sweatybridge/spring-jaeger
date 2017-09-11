@@ -56,6 +56,7 @@ services:
       JAEGER_AGENT_HOST: jaeger
       JAEGER_SAMPLER_TYPE: const
       JAEGER_SAMPLER_PARAM: 1
+      JAEGER_REPORTER_MAX_QUEUE_SIZE: 10000
     deploy:
       mode: replicated
       replicas: 1
